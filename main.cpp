@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cstdlib>
+#include <tuple>
 #include <string>
 #include <sstream>
 
@@ -31,10 +31,9 @@ void clearTerminal() {
     std::cout << "\033[2J\033[H";
 }
 
-
-int calculator(int number_a, char number_operator, int number_b) {
+int calcule(int number_a, char op, int number_b) {
     int result = 0;
-    switch (number_operator) {
+    switch (op) {
         default:;
         case '+': result = number_a + number_b; break;
         case '-': result = number_a - number_b; break;
@@ -47,48 +46,40 @@ int calculator(int number_a, char number_operator, int number_b) {
     return result;
 }
 
-
-double parseText(std::string & text) {
+std::tuple<long long, char, long long> parseToNumbersAndOperator(const std::string & text) {
     std::istringstream iss(text);
     long long number_a, number_b;
     char op;
 
     if (!(iss >> number_a >> op >> number_b)) {
-        std::cout << "ERROR: Invalid input" << std::endl;
-        return 1;
+        std::cout << "ERROR: Invalid text" << std::endl;
+        return {0, '?', 0};
     }
 
-    long long result;
-    switch (op) {
-        case '+': result = number_a + number_b; break;
-        case '-': result = number_a + number_b; break;
-        case '*': result = number_a + number_b; break;
-        case '/':
-            if (number_b != 0) result = number_a / number_b;
-            else {
-                std::cout << "ERROR: Division by zero\n";
-                return 1;
-            }
-            break;
-        default:
-            std::cout << "ERROR: Unknown operator" << std::endl;
-            return 1;
-    }
-
-    std::cout << "Result: " << result << std::endl;
-    return result;
+    return {number_a, op, number_b};
 }
 
+void calculator() {
+    while (true) {
+        std::string input = getLine("Insert a count: ");
+        auto [nb_a, op, nb_b] = parseToNumbersAndOperator(input);
+        std::cout << "Result: " << calcule(nb_a, op, nb_b) << std::endl;
+    }
+}
 
 int main() {
     clearTerminal();
     for (int i = 0; i < 10; i++) {
-        clearTerminal();
-        std::string input = getLine("Select a option:\n [1] calculator\nR: ");
+        clearTerminal(); // Not's work, Why not' working?, I don't know
+        std::string input = getLine("Select a option:\n [1] calculator\n [2] it's par?\nR: ");
         if (input == "1") {
-            clearTerminal();
+            clearTerminal(); // Not's work, Why not' working?, I don't know, Again
             std::string to_calcule = getLine("Insert the calcule: ");
-            parseText(to_calcule);
+            auto [nb_a, op, nb_b] = parseToNumbersAndOperator(to_calcule);
+            std::cout << "Result: " << calcule(nb_a, op, nb_b) << std::endl;
+        }
+        else if (input == "2") {
+            clearTerminal();
         }
         else {
             printLine("Access denied");
